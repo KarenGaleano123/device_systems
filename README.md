@@ -1,63 +1,36 @@
-# 📱 device_systems API
+# device_systems
 
-##  Descripción
+## Descripción
 
-`device_systems` es una API desarrollada con FastAPI para la gestión de dispositivos y usuarios.  
-La aplicación permite registrar, consultar y administrar información mediante endpoints RESTful.
+**device_systems** es una API REST desarrollada con FastAPI para la gestión de usuarios. El proyecto implementa operaciones CRUD completas sobre el recurso **users**, permitiendo crear, consultar, actualizar y eliminar usuarios.
 
-Este proyecto fue desarrollado utilizando Python y FastAPI, implementando buenas prácticas de desarrollo backend y documentación automática con Swagger UI.
+Además, la aplicación incorpora validación de datos mediante Pydantic, manejo de errores con HTTPException, documentación automática con Swagger UI y ReDoc, y reutilización de lógica mediante Dependency Injection.
 
 ---
 
-#  Tecnologías Utilizadas
+# Tecnologías utilizadas
 
 - Python 3
 - FastAPI
 - Uvicorn
-- Pydantic
-- Swagger UI
+- Pydantic v2
+- Git
+- GitHub
 
 ---
 
-#  Instalación de Dependencias
+# Instalación
 
-## 1. Clonar el repositorio
+Instalar las dependencias necesarias:
 
 ```bash
-git clone https://github.com/tu_usuario/device_systems.git
+pip install fastapi
+pip install uvicorn
+pip install pydantic
+pip install email-validator
 ```
 
----
-
-## 2. Ingresar al proyecto
-
-```bash
-cd device_systems
-```
-
----
-
-## 3. Crear entorno virtual
-
-### Windows
-
-```bash
-python -m venv venv
-```
-
----
-
-## 4. Activar entorno virtual
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
----
-
-## 5. Instalar dependencias
+O utilizando requirements.txt:
 
 ```bash
 pip install -r requirements.txt
@@ -65,156 +38,254 @@ pip install -r requirements.txt
 
 ---
 
-#  Ejecución del Servidor
+# Ejecución del proyecto
 
-Ejecutar el servidor con el siguiente comando:
+Ejecutar el servidor desde la raíz del proyecto:
 
 ```bash
 python -m uvicorn app.main:app --reload
 ```
 
-Servidor disponible en:
+La API estará disponible en:
 
-```txt
+```text
 http://127.0.0.1:8000
 ```
 
 ---
 
-#  Documentación Swagger UI
+# Documentación automática
 
-FastAPI genera documentación automática.
+## Swagger UI
 
-Acceder desde:
-
-```txt
+```text
 http://127.0.0.1:8000/docs
 ```
 
----
+### Captura 1 - Swagger UI
 
-#  Tabla de Endpoints
-
-| Método | Endpoint | Descripción |
-|---|---|---|
-| GET | / | Mensaje de bienvenida |
-| GET | /users | Obtener lista de usuarios |
-| POST | /users | Crear nuevo usuario |
-| GET | /devices | Obtener lista de dispositivos |
-| POST | /devices | Registrar dispositivo |
+![Swagger UI](./images/swagger-ui.png)
 
 ---
 
-#  Ejemplo de Petición GET
+## ReDoc
 
-## Obtener usuarios
-
-### Request
-
-```http
-GET /users
+```text
+http://127.0.0.1:8000/redoc
 ```
 
-### Response
+### Captura 2 - ReDoc
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Karen",
-    "email": "karen@gmail.com"
-  }
-]
-```
+![ReDoc](./images/redoc.png)
 
 ---
 
-#  Ejemplo de Petición POST
+# Estructura del proyecto
 
-## Crear usuario
-
-### Request
-
-```http
-POST /users
-```
-
-### Body
-
-```json
-{
-  "name": "Karen",
-  "email": "karen@gmail.com"
-}
-```
-
-### Response
-
-```json
-{
-  "message": "Usuario creado correctamente"
-}
-```
-
----
-
-#  Capturas de Swagger UI
-
-##  Ejemplo 1
-
-![Ejemplo 1](images/ejemplo1.png)
-
----
-
-##  Ejemplo 2
-
-![Ejemplo 2](images/ejemplo2.png)
-
----
-
-## Ejemplo 3
-
-![Ejemplo 3](images/ejemplo3.png)
-
----
-
-##  Ejemplo 4
-
-![Ejemplo 4](images/ejemplo4.png)
-
----
-
-##  Ejemplo 5
-
-![Ejemplo 5](images/ejemplo5.png)
-
----
-
-##  Ejemplo 6
-
-![Ejemplo 6](images/ejemplo6.png)
-
----
-
-# Estructura del Proyecto
-
-```txt
+```text
 device_systems/
 │
 ├── app/
 │   ├── main.py
-│   ├── routers/
-│   ├── models/
-│   └── schemas/
+│   │
+│   ├── routes/
+│   │   └── user_routes.py
+│   │
+│   ├── schemas/
+│   │   └── user_schema.py
+│   │
+│   ├── services/
+│   │   └── user_service.py
+│   │
+│   ├── dependencies/
+│   │   └── user_dependencies.py
+│   │
+│   └── data/
+│       └── users_db.py
 │
 ├── images/
-│   ├── ejemplo1.png
-│   ├── ejemplo2.png
-│   ├── ejemplo3.png
-│   ├── ejemplo4.png
-│   ├── ejemplo5.png
-│   └── ejemplo6.png
 │
 ├── requirements.txt
-├── README.md
+└── README.md
 ```
+
+---
+
+# Explicación de la estructura
+
+### routes
+
+Contiene los endpoints de la API.
+
+### schemas
+
+Contiene los modelos Pydantic utilizados para validar datos de entrada y salida.
+
+### services
+
+Contiene la lógica de negocio relacionada con los usuarios.
+
+### dependencies
+
+Contiene funciones reutilizables mediante Dependency Injection.
+
+### data
+
+Contiene la simulación de la base de datos en memoria.
+
+---
+
+# Endpoints disponibles
+
+| Método | Endpoint | Descripción |
+|----------|-------------|-------------|
+| GET | /users | Listar usuarios |
+| GET | /users/{user_id} | Consultar usuario por ID |
+| POST | /users | Crear usuario |
+| PUT | /users/{user_id} | Actualizar usuario completamente |
+| PATCH | /users/{user_id} | Actualizar parcialmente un usuario |
+| DELETE | /users/{user_id} | Eliminar usuario |
+
+---
+
+# Evidencia de pruebas de endpoints
+
+## Captura 1 - GET /users
+
+![GET Users](./images/captura1.png)
+
+---
+
+## Captura 2 - GET /users/{user_id}
+
+![GET User By ID](./images/captura2.png)
+
+---
+
+## Captura 3 - POST /users
+
+![POST User](./images/captura3.png)
+
+---
+
+## Captura 4 - PUT /users/{user_id}
+
+![PUT User](./images/captura4.png)
+
+---
+
+## Captura 5 - PATCH /users/{user_id}
+
+![PATCH User](./images/captura5.png)
+
+---
+
+## Captura 6 - DELETE /users/{user_id}
+
+![DELETE User](./images/captura6.png)
+
+---
+
+# Evidencia de errores controlados
+
+## Captura 7 - Error 404 Not Found
+
+Prueba realizada consultando un usuario inexistente.
+
+**Respuesta obtenida:**
+
+```json
+{
+  "detail": "Usuario no encontrado"
+}
+```
+
+![Error 404](./images/captura7.png)
+
+---
+
+## Captura 8 - Error 400 Bad Request
+
+Prueba realizada intentando registrar un correo electrónico duplicado.
+
+**Respuesta obtenida:**
+
+```json
+{
+  "detail": "El correo ya existe"
+}
+```
+
+![Error 400](./images/captura8.png)
+
+---
+
+# Ejemplo de creación de usuario
+
+```json
+{
+  "name": "Karen",
+  "email": "karen@gmail.com",
+  "role": "admin",
+  "is_active": true
+}
+```
+
+---
+
+# Dependency Injection (Depends)
+
+Se implementó Dependency Injection mediante la función:
+
+```python
+def get_user_or_404(user_id: int):
+```
+
+Esta dependencia permite validar la existencia de un usuario antes de realizar operaciones como actualización o eliminación.
+
+### Beneficios
+
+- Reutilización de código.
+- Menor duplicación de lógica.
+- Mejor organización del proyecto.
+- Mayor mantenibilidad.
+
+---
+
+# Manejo de errores
+
+La API controla diferentes situaciones mediante HTTPException:
+
+- Usuario no encontrado.
+- Correo electrónico duplicado.
+- Actualización sin datos.
+- Eliminación de usuario inexistente.
+- Errores de validación de Pydantic.
+
+Ejemplo:
+
+```json
+{
+  "detail": "Usuario no encontrado"
+}
+```
+
+---
+
+# Códigos de estado HTTP utilizados
+
+| Código | Descripción |
+|----------|-------------|
+| 200 | Operación exitosa |
+| 201 | Recurso creado correctamente |
+| 400 | Solicitud incorrecta |
+| 404 | Usuario no encontrado |
+| 422 | Error de validación |
+
+---
+
+# Reflexión final
+
+Durante el desarrollo de esta actividad se evolucionó una API básica hacia una API REST más completa y profesional. Se implementaron operaciones CRUD completas utilizando los métodos GET, POST, PUT, PATCH y DELETE. También se incorporaron validaciones mediante Pydantic, manejo de errores con HTTPException y documentación automática mediante Swagger UI y ReDoc.
+
+La utilización de Dependency Injection permitió reutilizar lógica común y mejorar la organización del proyecto. Esta evolución facilitó la comprensión de buenas prácticas para el desarrollo de APIs REST utilizando FastAPI.
