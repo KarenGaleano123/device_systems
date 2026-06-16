@@ -1,4 +1,4 @@
-# device_systems
+# device_systems crud completo
 
 ## Descripción
 
@@ -51,33 +51,6 @@ La API estará disponible en:
 ```text
 http://127.0.0.1:8000
 ```
-
----
-
-# Documentación automática
-
-## Swagger UI
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-### Captura 1 - Swagger UI
-
-![Swagger UI](./images/swagger-ui.png)
-
----
-
-## ReDoc
-
-```text
-http://127.0.0.1:8000/redoc
-```
-
-### Captura 2 - ReDoc
-
-![ReDoc](./images/redoc.png)
-
 ---
 
 # Estructura del proyecto
