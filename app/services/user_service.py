@@ -1,76 +1,156 @@
-from app.data.users_db import users_db
-
-
-# Obtener todos los usuarios
-def get_all_users():
-    return users_db
-
-
-# Obtener usuario por ID
-def get_user_by_id(user_id: int):
-
-    for user in users_db:
-        if user["id"] == user_id:
-            return user
-
-    return None
+from sqlalchemy.orm import Session
+from app.models.user_model import User
 
 
 # Crear usuario
-def create_user_service(user):
+def create_user(db: Session, user_data):
 
-    new_user = {
-        "id": len(users_db) + 1,
-        "name": user.name,
-        "email": user.email,
-        "role": user.role,
-        "is_active": user.is_active
-    }
+    new_user = User(
+        name=user_data.name,
+        email=user_data.email,
+        role=user_data.role,
+        is_active=user_data.is_active
+    )
 
-    users_db.append(new_user)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
 
     return new_user
 
 
-# Actualización completa (PUT)
-def update_user(user_id: int, user_data):
+# Obtener todos los usuarios
+def get_users(db: Session):
 
-    user = get_user_by_id(user_id)
+    return db.query(User).all()
+
+
+# Obtener usuario por ID
+def get_user_by_id(db: Session, user_id: int):
+
+    return db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+
+# Obtener usuario por email
+def get_user_by_email(
+    db: Session,
+    email: str
+):
+
+    return db.query(User).filter(
+        User.email == email
+    ).first()
+
+
+# Actualización completa (PUT)
+def update_user(
+    db: Session,
+    user_id: int,
+    user_data
+):
+
+    user = get_user_by_id(
+        db,
+        user_id
+    )
 
     if not user:
         return None
 
-    user["name"] = user_data.name
-    user["email"] = user_data.email
-    user["role"] = user_data.role
-    user["is_active"] = user_data.is_active
+    user.name = user_data.name
+    user.email = user_data.email
+    user.role = user_data.role
+    user.is_active = user_data.is_active
+
+    db.commit()
+    db.refresh(user)
 
     return user
 
 
 # Actualización parcial (PATCH)
-def patch_user(user_id: int, data):
+def patch_user(
+    db: Session,
+    user_id: int,
+    update_data: dict
+):
 
-    user = get_user_by_id(user_id)
+    user = get_user_by_id(
+        db,
+        user_id
+    )
 
     if not user:
         return None
 
-    update_data = data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
 
-    user.update(update_data)
+    db.commit()
+    db.refresh(user)
 
     return user
 
 
-# Eliminar usuario (DELETE)
-def delete_user(user_id: int):
+# Eliminar usuario
+def delete_user(
+    db: Session,
+    user_id: int
+):
 
-    user = get_user_by_id(user_id)
+    user = get_user_by_id(
+        db,
+        user_id
+    )
 
     if not user:
         return False
 
-    users_db.remove(user)
+    db.delete(user)
+    db.commit()
 
     return True
+
+
+# Filtrar por rol
+def get_users_by_role(
+    db: Session,
+    role: str
+):
+
+    return db.query(User).filter(
+        User.role == role
+    ).all()
+
+
+# Filtrar por estado
+def get_users_by_status(
+    db: Session,
+    is_active: bool
+):
+
+    return db.query(User).filter(
+        User.is_active == is_active
+    ).all()
+
+
+# Ordenar por nombre
+def order_users_by_name(
+    db: Session
+):
+
+    return db.query(User).order_by(
+        User.name
+    ).all()
+
+
+# Ordenar por fecha
+def order_users_by_date(
+    db: Session
+):
+
+    return db.query(User).order_by(
+        User.created_at
+    ).all()

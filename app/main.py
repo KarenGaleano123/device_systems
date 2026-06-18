@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 
+from app.database.connection import Base, engine
+from app.models.user_model import User
 from app.routes.user_routes import router as user_router
+
+# Crear tablas automáticamente
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Device Systems API",
@@ -16,9 +21,9 @@ Permite:
 - Actualizar usuarios
 - Eliminar usuarios
 
-Desarrollada con FastAPI y Pydantic v2.
+Desarrollada con FastAPI, SQLAlchemy y Pydantic v2.
 """,
-    version="2.0.0",
+    version="3.0.0",
     contact={
         "name": "Karen Galeano",
         "email": "Karen@example.com"
@@ -32,7 +37,7 @@ async def add_custom_headers(request, call_next):
     response = await call_next(request)
 
     response.headers["X-App-Name"] = "device_systems"
-    response.headers["X-API-Version"] = "2.0"
+    response.headers["X-API-Version"] = "3.0"
 
     return response
 
