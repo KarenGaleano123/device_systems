@@ -1,37 +1,37 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Literal, Optional
+from typing import Optional
+from datetime import datetime
 
 
-# Modelo base
-class UserBase(BaseModel):
-    name: str = Field(..., min_length=3)
-    email: EmailStr
-    role: Literal["admin", "support", "user"]
-    is_active: bool
+class UserCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100, example="Ana Pérez")
+    email: EmailStr = Field(..., example="ana@sena.edu.co")
+    phone: Optional[str] = Field(None, example="3001234567")
+
+    model_config = {"from_attributes": True}
 
 
-# Crear usuario (POST)
-class UserCreate(UserBase):
-    pass
-
-
-# Actualización completa (PUT)
-class UserUpdate(UserBase):
-    pass
-
-
-# Actualización parcial (PATCH)
-class UserPatch(BaseModel):
-    name: Optional[str] = Field(None, min_length=3)
+class UserUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=2, max_length=100)
     email: Optional[EmailStr] = None
-    role: Optional[Literal["admin", "support", "user"]] = None
-    is_active: Optional[bool] = None
+    phone: Optional[str] = None
+
+    model_config = {"from_attributes": True}
 
 
-# Respuesta de usuario
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
+    name: str
+    email: str
+    phone: Optional[str]
+    created_at: Optional[datetime]
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
+
+class UserBasicResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+
+    model_config = {"from_attributes": True}

@@ -1,53 +1,57 @@
 from fastapi import FastAPI
-
 from app.database.connection import Base, engine
-from app.models.user_model import User
+from app.models import User, Device, Loan
 from app.routes.user_routes import router as user_router
-
-# Crear tablas automáticamente
-Base.metadata.create_all(bind=engine)
+from app.routes.device_routes import router as device_router
+from app.routes.loan_routes import router as loan_router
 
 app = FastAPI(
-    title="Device Systems API",
+    
+    title="device_systems API",
     description="""
-API REST para la gestión de usuarios del sistema Device Systems.
+## Sistema de Gestión de Usuarios, Dispositivos y Préstamos
 
-Permite:
+API REST construida con **FastAPI** y **SQLAlchemy** que permite:
 
-- Crear usuarios
-- Listar usuarios
-- Consultar usuarios por ID
-- Filtrar usuarios
-- Actualizar usuarios
-- Eliminar usuarios
+- Gestionar **usuarios** del sistema
+- Registrar **dispositivos** tecnológicos
+- Administrar **préstamos** de dispositivos a usuarios
+- Consultar información relacionada mediante **JOINs**
+- Filtrar por tipo, estado, usuario o dispositivo
 
-Desarrollada con FastAPI, SQLAlchemy y Pydantic v2.
-""",
-    version="3.0.0",
+### Recursos disponibles:
+- `/users` — CRUD completo de usuarios
+- `/devices` — CRUD completo de dispositivos con filtros
+- `/loans` — Gestión de préstamos con consultas avanzadas
+    """,
+    version="2.0.0",
     contact={
-        "name": "Karen Galeano",
-        "email": "Karen@example.com"
+        "name": "SENA - Tecnólogo en ADSO",
+        "email": "aprendiz@sena.edu.co"
     }
 )
 
 
-@app.middleware("http")
-async def add_custom_headers(request, call_next):
 
-    response = await call_next(request)
+from fastapi.middleware.cors import CORSMiddleware
 
-    response.headers["X-App-Name"] = "device_systems"
-    response.headers["X-API-Version"] = "3.0"
-
-    return response
-
-
-@app.get("/")
-def home():
-
-    return {
-        "message": "Bienvenido a Device Systems API"
-    }
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_router)
+app.include_router(device_router)
+app.include_router(loan_router)
+
+@app.get("/", tags=["Root"], summary="Bienvenida a la API")
+def root():
+    return {
+        "message": "Bienvenido a device_systems API v2.0",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "recursos": ["/users", "/devices", "/loans"]
+    }
