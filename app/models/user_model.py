@@ -1,17 +1,18 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from app.database.connection import Base
-
+from app.database.connection import Base # O como tengas tu Base
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False, index=True)
-    phone = Column(String, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    email = Column(String, unique=True, index=True, nullable=False)
+    
+    # Nuevos campos de seguridad requeridos por la guía
+    hashed_password = Column(String, nullable=False)
+    role = Column(String, default="user", nullable=False) # admin, support, user
+    is_active = Column(Boolean, default=True, nullable=False)
 
-    # Un usuario puede tener muchos préstamos
+    # Relaciones existentes (ejemplo)
     loans = relationship("Loan", back_populates="user")

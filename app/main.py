@@ -1,57 +1,44 @@
 from fastapi import FastAPI
-from app.database.connection import Base, engine
-from app.models import User, Device, Loan
-from app.routes.user_routes import router as user_router
-from app.routes.device_routes import router as device_router
-from app.routes.loan_routes import router as loan_router
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# Importación corregida apuntando a tu carpeta 'middelwares'
+from app.middelwares.request_middleware import SecurityAndLoggingMiddleware
+from app.auth import auth_routes
+from app.routes import user_routes, device_routes, loan_routes
+
+# 1. Configurar Rate Limiting
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
-    
     title="device_systems API",
-    description="""
-## Sistema de Gestión de Usuarios, Dispositivos y Préstamos
-
-API REST construida con **FastAPI** y **SQLAlchemy** que permite:
-
-- Gestionar **usuarios** del sistema
-- Registrar **dispositivos** tecnológicos
-- Administrar **préstamos** de dispositivos a usuarios
-- Consultar información relacionada mediante **JOINs**
-- Filtrar por tipo, estado, usuario o dispositivo
-
-### Recursos disponibles:
-- `/users` — CRUD completo de usuarios
-- `/devices` — CRUD completo de dispositivos con filtros
-- `/loans` — Gestión de préstamos con consultas avanzadas
-    """,
-    version="2.0.0",
-    contact={
-        "name": "SENA - Tecnólogo en ADSO",
-        "email": "aprendiz@sena.edu.co"
-    }
+    description="API REST segura para gestión de usuarios, dispositivos y préstamos",
+    version="3.0.0"
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# 2. Agregar Middleware personalizado
+app.add_middleware(SecurityAndLoggingMiddleware)
 
-from fastapi.middleware.cors import CORSMiddleware
-
+# 3. Configurar CORS (Fase 9)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(user_router)
-app.include_router(device_router)
-app.include_router(loan_router)
+# 4. Incluir los Routers
+app.include_router(auth_routes.router)
+app.include_router(user_routes.router)
+app.include_router(device_routes.router)
+app.include_router(loan_routes.router)
 
-@app.get("/", tags=["Root"], summary="Bienvenida a la API")
-def root():
-    return {
-        "message": "Bienvenido a device_systems API v2.0",
-        "docs": "/docs",
-        "redoc": "/redoc",
-        "recursos": ["/users", "/devices", "/loans"]
-    }
+@app.get("/", tags=["Root"])
+def read_root():
+    return {"status": "API device_systems activa y protegida"}
