@@ -1,0 +1,40 @@
+# Bytecode / cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Bases de datos locales
+*.db
+*.sqlite3
+
+# Variables de entorno
+.env
+.env.local
+
+# Alembic (cache compilado, no las migraciones en sí)
+alembic/__pycache__/
+alembic/versions/__pycache__/
+
+# Archivos de VS Code
+.vscode/
+
+# Archivos de PyCharm
+.idea/
+
+# Distribución / empaquetado
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

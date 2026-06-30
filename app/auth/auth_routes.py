@@ -8,7 +8,7 @@ from app.dependencies.auth_dependency import get_current_active_user
 from app.models.user_model import User
 
 # Importamos el limitador global desde main
-from app.main import limiter 
+from app.core.rate_limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 

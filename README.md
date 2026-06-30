@@ -406,5 +406,59 @@ El uso de persistencia mejora la confiabilidad del sistema, facilita el mantenim
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+# Device Systems Proyecto final
+
+## Captura de la estructura del proyecto
+
+![Proyecto final](images/images1.png)
+
+![Proyecto final](images/images2.png)
+
+![Proyecto final](images/images3.png)
+
+![Proyecto final](images/images4.png)
+
+![Proyecto final](images/images5.png)
+
+![Proyecto final](images/images6.png)
+
+![Proyecto final](images/images7.png)
+
+![Proyecto final](images/images8.png)
+
+![Proyecto final](images/images9.png)
+
+![Proyecto final](images/images10.png)
+
+![Proyecto final](images/images11.png)
+
+![Proyecto final](images/images12.png)
+
+![Proyecto final](images/images13.png)
+
+![Proyecto final](images/images14.png)
+
+![Proyecto final](images/images15.png)
+
+---
+
+## Explicación de CORS configurado
+
+La API tiene configurado CORS mediante el middleware `CORSMiddleware` de FastAPI.
+
+Se permiten solicitudes desde los siguientes orígenes:
+
+```python
+allow_origins = [
+    "http://localhost:5173",
+    "http://localhost:3000"
+]
 
 
+## Reflexión final sobre la importancia de la seguridad en APIs REST
+
+La seguridad en las APIs REST es un aspecto fundamental para proteger la información y garantizar que únicamente los usuarios autorizados puedan acceder a los recursos del sistema. Durante el desarrollo de este proyecto se implementaron diferentes mecanismos de seguridad, como autenticación mediante JWT, control de roles y permisos, validación de contraseñas seguras, protección de rutas, limitación de solicitudes (Rate Limiting), configuración de CORS y uso de middleware para el monitoreo de peticiones.
+
+Estas medidas permiten reducir riesgos como accesos no autorizados, robo de información, ataques de fuerza bruta y abuso de los servicios expuestos por la API. Además, la documentación mediante Swagger/OpenAPI facilita la comprensión de los mecanismos de seguridad implementados y mejora la experiencia de los desarrolladores que consumen la API.
+
+Como aprendizaje principal, se concluye que la seguridad no debe considerarse una característica opcional, sino un componente esencial desde las primeras etapas del desarrollo. Una API segura protege los datos, mejora la confiabilidad del sistema y brinda mayor confianza tanto a los usuarios como a las organizaciones que utilizan la aplicación.

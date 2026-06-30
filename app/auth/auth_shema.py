@@ -2,6 +2,10 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 
 
+# =========================
+# REGISTRO DE USUARIOS
+# =========================
+
 class UserRegister(BaseModel):
     name: str
     email: EmailStr
@@ -12,14 +16,15 @@ class UserRegister(BaseModel):
     @classmethod
     def validate_password(cls, value):
         if len(value) < 8:
-            raise ValueError("La contraseña debe tener al menos 8 caracteres.")
+            raise ValueError(
+                "La contraseña debe tener al menos 8 caracteres."
+            )
         return value
 
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
+# =========================
+# RESPUESTA DE USUARIO
+# =========================
 
 class UserResponse(BaseModel):
     id: int
@@ -32,6 +37,10 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+# =========================
+# TOKEN JWT
+# =========================
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -42,12 +51,20 @@ class TokenData(BaseModel):
     role: Optional[str] = None
 
 
+# =========================
+# UPDATE COMPLETO (PUT)
+# =========================
+
 class UserUpdate(BaseModel):
     name: str
     email: EmailStr
     role: str
     is_active: bool
 
+
+# =========================
+# UPDATE PARCIAL (PATCH)
+# =========================
 
 class UserPatch(BaseModel):
     name: Optional[str] = None
