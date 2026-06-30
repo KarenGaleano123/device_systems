@@ -1,53 +1,43 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from app.core.rate_limiter import limiter
+# Importación corregida apuntando a tu carpeta 'middelwares'
+from app.middelwares.request_middleware import SecurityAndLoggingMiddleware
+from app.auth import auth_routes
+from app.routes import user_routes, device_routes, loan_routes
 
-from app.database.connection import Base, engine
-from app.models.user_model import User
-from app.routes.user_routes import router as user_router
+# 1. Configurar Rate Limiting
 
-# Crear tablas automáticamente
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Device Systems API",
-    description="""
-API REST para la gestión de usuarios del sistema Device Systems.
-
-Permite:
-
-- Crear usuarios
-- Listar usuarios
-- Consultar usuarios por ID
-- Filtrar usuarios
-- Actualizar usuarios
-- Eliminar usuarios
-
-Desarrollada con FastAPI, SQLAlchemy y Pydantic v2.
-""",
-    version="3.0.0",
-    contact={
-        "name": "Karen Galeano",
-        "email": "Karen@example.com"
-    }
+    title="device_systems API",
+    description="API REST segura para gestión de usuarios, dispositivos y préstamos",
+    version="3.0.0"
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-@app.middleware("http")
-async def add_custom_headers(request, call_next):
+# 2. Agregar Middleware personalizado
+app.add_middleware(SecurityAndLoggingMiddleware)
 
-    response = await call_next(request)
+# 3. Configurar CORS (Fase 9)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    response.headers["X-App-Name"] = "device_systems"
-    response.headers["X-API-Version"] = "3.0"
+# 4. Incluir los Routers
+app.include_router(auth_routes.router)
+app.include_router(user_routes.router)
+app.include_router(device_routes.router)
+app.include_router(loan_routes.router)
 
-    return response
-
-
-@app.get("/")
-def home():
-
-    return {
-        "message": "Bienvenido a Device Systems API"
-    }
-
-
-app.include_router(user_router)
+@app.get("/", tags=["Root"])
+def read_root():
+    return {"status": "API device_systems activa y protegida"}
